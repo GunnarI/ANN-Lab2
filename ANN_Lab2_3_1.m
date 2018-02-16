@@ -91,6 +91,14 @@ end
 
 
 
-%% Repeat for square function
-
-
+%% transform the output of the RBF to get error = 0 for square function and find how many units are needed.
+sq_error_new = zeros(length(2:20));
+fprintf('Improved square \n')
+sq_truefalse = true;
+for i = 2:20
+    sq_error_new(i) = batch_rbf_impr_squared(train_vect,train_square, test_vect,test_square,sigma,i,false);
+    if sq_error_new(i)== 0 && sq_truefalse
+        fprintf('equal to zero, error is %.4f, nr of units = %d \n',sq_error_new(i),i)
+        sq_truefalse = false;
+    end
+end
