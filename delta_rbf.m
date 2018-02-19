@@ -1,5 +1,5 @@
 function train_error = delta_rbf(train_vect, train_sin, test_vect, test_sin, sigma, eta, epochs, units, plotting)
-%%% uses delta function with incremental learning algorithm
+%%% uses delta function with incremental learning algorithm.
 
 %mui is the middle of the RBF, we place it at the sinusfunction.
 train_mui = get_mui(train_vect,train_sin,units);

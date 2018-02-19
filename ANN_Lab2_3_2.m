@@ -5,6 +5,8 @@ clear all; close all; clc;
 %As well as the training sets, one sinus function and one square function
 %Add noise to both training and testing data
 
+%Last part in seperate script
+
 %create training data
 train_vect = 0:0.1:2*pi;
 train_sin = sin(2*train_vect);
