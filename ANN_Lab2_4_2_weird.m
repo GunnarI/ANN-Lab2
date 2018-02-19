@@ -1,16 +1,20 @@
-close all;
+close all; clc; clear all;
 cities = importCities('cities.dat');
 
 [numNodes, numAttr] = size(cities);
 
 % Initialize randomized weight matrix (random weights between 0 and 1)
-W = rand(numNodes,numAttr);
+% randMat = (rand(numNodes,numAttr)-0.5)*0.1;
+W = rand(numNodes,numAttr); %min(1,max(0,cities+(randMat)));
+W_final = zeros(numNodes,numAttr);
 
 % Define the step size
 eta = 0.2;
+% Define losing step size
+eta_l = 0.005;
 
 % Define number of epochs
-epochs = 120;
+epochs = 200;
 % Define neighbourhood size vector
 neighSize = floor(linspace(2, 0, epochs)+0.1);
 %randomCity = randperm(numNodes,numNodes);
@@ -40,56 +44,81 @@ hold on
 
 % Define the parameter for conscience to allow looser to win
 C = 10;
+bias = zeros(1,numNodes);
+minLeakyDist = 0.2;
+finCities = zeros(1,numNodes);
+finCityIndex = 1;
 for i = 1:epochs
     randCity = randperm(numNodes);
-    for j = 1:numNodes
+    %j = 0;
+    for j = 1:length(randCity)
+        %j = j+1;
+    %for j = 1:length(randCity)
         % Calculate the distance between the weights and the attributes of
         % the current city
+        if ismember(randCity(j),finCities)
+            continue;
+        end
         p = cities(randCity(j),:);
         temp = p-W;
         % Introducing bias depending on the number of times a weight vector
         % has been updated so that if it has not been updated often it
         % might get picked as a winner even though it isn't
-        bias = C*(1/numNodes - numUpdates./sum(numUpdates));
+        if all(numUpdates)
+            bias = C*(1/numNodes - numUpdates./sum(numUpdates));
+        end
         d = sum(temp.^2,2)-bias';
-        [~,minNode] = min(d);
+        [minValue,minNode] = min(d);
         %fprintf('Winning node: %d\n', minNode)
         
         % Update the weights which correspond to the shortest distance as
         % well as all its neighbouring weights
-        for k = minNode-neighSize(i):minNode+neighSize(i)
-            if k < 1
-                l = numNodes + k;
-            elseif k > numNodes
-                l = k - numNodes;
-            else
-                l = k;
-            end
-                
-            W(l,:) = W(l,:) + eta*(p-W(l,:));
-            numUpdates(l) = numUpdates(l)+1;
-            
-            clearpoints(h{l});
-            addpoints(h{l},W(l,1),W(l,2));
+        if (neighSize(i) == 0)
+            W(minNode,:) = W(minNode,:) + eta*(p-W(minNode,:));
+            W(1:numNodes~=minNode,:) = W(1:numNodes~=minNode,:) + eta_l*(p-W(1:numNodes~=minNode,:));
+            numUpdates(minNode) = numUpdates(minNode)+1;
+
+            clearpoints(h{minNode});
+            addpoints(h{minNode},W(minNode,1),W(minNode,2));
             drawnow;
-            pause(0.0005);
+            pause(0.001);
+            if minValue < 0.005
+                W_final(minNode,:) = W(minNode, :);
+                W(minNode,:) = [inf,inf];
+                %randCity(j) = [];
+                finCities(finCityIndex) = randCity(j);
+                finCityIndex = finCityIndex+1;
+            end  
+        else
+            for k = minNode-neighSize(i):minNode+neighSize(i)
+                if k < 1
+                    l = numNodes + k;
+                elseif k > numNodes
+                    l = k - numNodes;
+                else
+                    l = k;
+                end
+
+                W(l,:) = W(l,:) + eta*(p-W(l,:));
+                numUpdates(l) = numUpdates(l)+1;
+
+                clearpoints(h{l});
+                addpoints(h{l},W(l,1),W(l,2));
+                drawnow;
+                pause(0.001);
+            end
         end
     end
 end
 hold off
 
+W = W_final;
 pos = zeros(numNodes,1);
 for i = 1:numNodes
     p = cities(i,:);
     temp = p-W;
     d = sum(temp.^2,2);
-    [~, dInd] = sort(d);
-    j = 1;
-    while ismember(dInd(j),pos)
-        j = j+1;
-    end
-    pos(i) = dInd(j);
-    %[~,pos(i)] = min(d);
+    [~,pos(i)] = min(d);
 end
 
 posPrint = sprintf('%d ', pos);
