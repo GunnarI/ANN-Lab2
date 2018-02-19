@@ -1,8 +1,9 @@
-function [train_error] = delta_rbf(train_vect, train_sin, test_vect, test_sin, sigma, eta, epochs, units, plotting)
+function train_error = delta_rbf(train_vect, train_sin, test_vect, test_sin, sigma, eta, epochs, units, plotting)
 %%% uses delta function with incremental learning algorithm
 
 %mui is the middle of the RBF, we place it at the sinusfunction.
-mui = get_mui(train_vect,train_sin,units);
+train_mui = get_mui(train_vect,train_sin,units);
+test_mui = get_mui(test_vect,test_sin,units);
 
 %train is the data we are using
 train = [train_vect; train_sin];
@@ -18,7 +19,7 @@ for epoch = 1:epochs
     test = test(:,shuffle);
     
     %create a phi matrix
-    rbf = GaussianRBF(train, mui, sigma);
+    rbf = GaussianRBF(train, train_mui, sigma);
     rbf = rbf';
     
     %update weights for each datapoint
@@ -33,10 +34,9 @@ for epoch = 1:epochs
         weights = weights + delta_weights;
         
         %test the data in each epoch
-        test_mui = get_mui(test(1,:),test(2,:),units);
         test_rbf = GaussianRBF(test, test_mui ,sigma);
         test_rbf = test_rbf';
-        test_f = weights*test_rbf;
+        test_f(i) = weights*test_rbf(:,i);
     end
     
     %deshuffle functions and data
@@ -49,6 +49,7 @@ for epoch = 1:epochs
     %train_error(epoch) = mean(abs(train_sin - weights*rbf));
     train_error(epoch) = mean(abs(weights*rbf - train_sin));
 end
+
 if plotting == true
     %plotting of training and testing function with output
     figure(1)
@@ -71,4 +72,4 @@ end
     
 %error of as mean of all N patterns
 %train_error = mean(train_error);
-train_error = train_error(end);
+%train_error = train_error(end);

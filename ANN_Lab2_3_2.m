@@ -36,6 +36,7 @@ second = true;
 third = true;
 fprintf('BATCH LEARNING:\nFor the sinus \n')
 for i = 5:60
+    %calculate error for batch learning approach
     bat_error(i) = batch_rbf(train_vect,train_sin, test_vect,test_sin,sigma,i,false);
     if bat_error(i)<0.1 && first
         fprintf('Below 0.1, error is %.4f, nr of units = %d \n',bat_error(i),i)
@@ -57,34 +58,33 @@ end
 
 %define constants
 eta = 0.15;
-epochs = 5;
-
-% %Shuffle the data by random
-% shuffle = randperm(length(train_vect));
-% train_sin = train_sin(:,shuffle);
-% test_sin = test_sin(:,shuffle);
+epochs = 8;
 
 %Create a for loop to find when the error goes below 0.1, 0.01 and 0.001.
-del_error = zeros(length(5:60),1);
+del_error = zeros(length(5:60),epochs);
 first = true;
 second = true;
 third = true;
 fprintf('DELTA RULE:\nFor the sinus \n')
 
 for i = 5:60
-    del_error(i) = delta_rbf(train_vect,train_sin, test_vect,test_sin, sigma, eta, epochs, i,true);
-    if del_error(i)<0.1 && first
-        fprintf('Below 0.1, error is %.4f, nr of units = %d \n',del_error(i),i)
-        first = false;
+    del_error(i,:) = delta_rbf(train_vect,train_sin, test_vect,test_sin, sigma, eta, epochs, i,false);
+    for ep = 1:epochs  %to check epochs  
+        if del_error(i,ep)<0.1 && first
+            fprintf('Below 0.1, error is %.4f, nr of units = %d and epochs = %d \n',del_error(i,ep),i,ep)
+            first = false;
+        end
+        
+        if del_error(i,ep)<0.01 && second
+            fprintf('Below 0.01, error is %.4f, nr of units = %d and epochs = %d \n',del_error(i,ep),i,ep)
+            second = false;
+        end
+        
+        if del_error(i,ep)<0.001 && third
+            fprintf('Below 0.001, error is %.4f, nr of units = %d and epochs = %d \n',del_error(i,ep),i,ep)
+            third = false;
+            return
+        end   
     end
-    
-    if del_error(i)<0.01 && second
-        fprintf('Below 0.01, error is %.4f, nr of units = %d \n',del_error(i),i)
-        second = false;
-    end
-    
-    if del_error(i)<0.001 && third
-        fprintf('Below 0.001, error is %.4f, nr of units = %d \n',del_error(i),i)
-        third = false;
-    end    
 end
+
