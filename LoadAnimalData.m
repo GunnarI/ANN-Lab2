@@ -1,4 +1,5 @@
 function [props, animalNames, animalAttributes] = LoadAnimalData()
+% No change
 if exist('animalNames.mat', 'file') == 2
     load animalNames;
 else
