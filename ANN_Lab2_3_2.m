@@ -56,8 +56,8 @@ end
 %% Delta rule
 
 %define constants
-eta = 0.01;
-epochs = 4;
+eta = 0.15;
+epochs = 5;
 
 % %Shuffle the data by random
 % shuffle = randperm(length(train_vect));
