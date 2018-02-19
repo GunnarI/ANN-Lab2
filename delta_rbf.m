@@ -66,5 +66,3 @@ end
     
 %error of as mean of all N patterns
 train_error = mean(train_error);
-
-
