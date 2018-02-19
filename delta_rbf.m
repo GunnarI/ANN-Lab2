@@ -56,12 +56,17 @@ if plotting == true
     %plot training function
     subplot(2,1,1)
     plot(train_sin), hold on
-    plot(weights*rbf), title({'Training function';str}), hold off
+    plot(weights*rbf), hold off
+    title({'Training function';str}),
+    legend('original','output')
     
     %plot testing function
     subplot(2,1,2)
     plot(test_sin), hold on
-    plot(test_f), title({'Testing function';str}), hold off
+    plot(test_f), hold off
+    title({'Testing function';str})
+    legend('original','output')
+    
 end
     
 %error of as mean of all N patterns

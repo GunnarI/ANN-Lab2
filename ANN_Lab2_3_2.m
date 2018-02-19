@@ -56,7 +56,7 @@ end
 %% Delta rule
 
 %define constants
-eta = 0.1;
+eta = 0.01;
 epochs = 4;
 
 % %Shuffle the data by random
