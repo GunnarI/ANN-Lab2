@@ -9,7 +9,7 @@ train = [train_vect; train_sin];
 test = [test_vect; test_sin];
 
 %Initialise weights
-weights = zeros(1,units);
+weights = rand(1,units);
 
 for epoch = 1:epochs
     %Shuffle the data by random for each epoch
@@ -25,7 +25,7 @@ for epoch = 1:epochs
     for i = 1:length(test)
     
         %instantanious error xi(estimated error)
-        e = train_sin(i) - weights*rbf(:,i);
+        e = train(2,i) - rbf(:,i)*weights;
         %xi(iter) = 0.5.*e.^2;                  %is built in delta_weight function
         
         %weight update
@@ -38,8 +38,11 @@ for epoch = 1:epochs
         test_rbf = test_rbf';
         test_f = weights*test_rbf;
     end
-    train_error(epoch) = mean(abs(train_sin - weights*rbf));
+    %train_error(epoch) = mean(abs(train_sin - weights*rbf));
+    train_error(epoch) = sum((weights*rbf - train_sin).^2);
 end
 
-%error of the last epoch for comparison
-train_error = train_error(end);
+%error of as sum of all N patterns
+train_error = mean(train_error);
+
+

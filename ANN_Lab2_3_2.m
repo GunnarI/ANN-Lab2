@@ -56,13 +56,13 @@ end
 %% Delta rule
 
 %define constants
-eta = 0.02;
-epochs = 10;
+eta = 0.2;
+epochs = 4;
 
-%Shuffle the data by random
-shuffle = randperm(length(train_vect));
-train_sin = train_sin(:,shuffle);
-test_sin = test_sin(:,shuffle);
+% %Shuffle the data by random
+% shuffle = randperm(length(train_vect));
+% train_sin = train_sin(:,shuffle);
+% test_sin = test_sin(:,shuffle);
 
 %Create a for loop to find when the error goes below 0.1, 0.01 and 0.001.
 del_error = zeros(length(5:60),1);
