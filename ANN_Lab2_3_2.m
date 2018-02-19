@@ -56,7 +56,7 @@ end
 %% Delta rule
 
 %define constants
-eta = 0.2;
+eta = 0.1;
 epochs = 4;
 
 % %Shuffle the data by random
@@ -71,8 +71,8 @@ second = true;
 third = true;
 fprintf('DELTA RULE:\nFor the sinus \n')
 
-for i = 5:60            
-    del_error(i) = delta_rbf(train_vect,train_sin, test_vect,test_sin, sigma, eta, epochs, i,false);
+for i = 5:60
+    del_error(i) = delta_rbf(train_vect,train_sin, test_vect,test_sin, sigma, eta, epochs, i,true);
     if del_error(i)<0.1 && first
         fprintf('Below 0.1, error is %.4f, nr of units = %d \n',del_error(i),i)
         first = false;

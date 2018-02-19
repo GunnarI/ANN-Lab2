@@ -22,10 +22,10 @@ for epoch = 1:epochs
     rbf = rbf';
     
     %update weights for each datapoint
-    for i = 1:length(test)
+    for i = 1:length(train)
     
         %instantanious error xi(estimated error)
-        e = train(2,i) - rbf(:,i)*weights;
+        e = train(2,i) - weights*rbf(:,i);
         %xi(iter) = 0.5.*e.^2;                  %is built in delta_weight function
         
         %weight update
@@ -38,11 +38,33 @@ for epoch = 1:epochs
         test_rbf = test_rbf';
         test_f = weights*test_rbf;
     end
+    
+    %deshuffle functions and data
+    rbf(:,shuffle) = rbf;
+    train(:,shuffle) = train;
+    test(:,shuffle) = test;
+    test_f(:,shuffle) = test_f;
+    
+    %Calculate error
     %train_error(epoch) = mean(abs(train_sin - weights*rbf));
-    train_error(epoch) = sum((weights*rbf - train_sin).^2);
+    train_error(epoch) = mean(abs(weights*rbf - train_sin));
 end
-
-%error of as sum of all N patterns
+if plotting == true
+    %plotting of training and testing function with output
+    figure(1)
+    str = sprintf('Epoch: %d, Hidden Nodes %d', epoch, units);
+    %plot training function
+    subplot(2,1,1)
+    plot(train_sin), hold on
+    plot(weights*rbf), title({'Training function';str}), hold off
+    
+    %plot testing function
+    subplot(2,1,2)
+    plot(test_sin), hold on
+    plot(test_f), title({'Testing function';str}), hold off
+end
+    
+%error of as mean of all N patterns
 train_error = mean(train_error);
 
 
