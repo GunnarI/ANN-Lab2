@@ -50,3 +50,42 @@ delta_nodes = 10;
 %create rbf and performe delta-rule
 del_error(:) = delta_rbf(train_vect, train_sin, test_vect, test_sin, sigma, eta, epochs, delta_nodes, false);
 
+%% Two-layer perceptron
+
+%hidden layers (same as for the compared network)
+perc_nodes = 10;
+
+%prepare data
+data = [train_sin, test_sin];
+data_noiseless = [train_sin - gauss_noise, test_sin - gauss_noise];
+
+%decide on ratio for training/validation
+trval_ratio = 0.2;
+train_len = round(length(train_sin) - trval_ratio*length(train_sin));
+
+net = feedforwardnet(perc_nodes);
+net.trainFcn = 'trainlm';                       %training model (Levenberg-Marquardt)
+net.divideFcn = 'divideind';                    %to divide test/val/trial by param.
+net.divideParam.trainInd = 1:train_len;
+net.divideParam.valInd = train_len+1:length(train_sin);
+net.divideParam.testInd = length(train_sin)+1:length(data);
+net.performParam.regularization = 0.00001;      %to change regularization strength
+%net.trainParam.max_fail = 6;
+net.trainParam.showWindow = false;              %to not get the pop-up window
+
+%train the network:
+[net,tr] = train(net,data, data_noiseless);
+
+y = net(data(length(train_sin)+1:length(data)));%plot testing data output
+figure('NAME','myfig')
+plot(y)
+hold on
+plot(train_sin,'r')                             %plot real data input
+plot((train_sin - gauss_noise),'g')
+legend('Network Output','Real Data','Real Data without Noise')
+title('Test data for two-layer network')
+hold off 
+
+% plot the performance
+% figure
+% plotperform(tr)
