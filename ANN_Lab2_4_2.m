@@ -10,9 +10,9 @@ W = rand(numNodes,numAttr);
 eta = 0.2;
 
 % Define number of epochs
-epochs = 120;
+epochs = 60;
 % Define neighbourhood size vector
-neighSize = floor(linspace(2, 0, epochs)+0.1);
+neighSize = floor(linspace(2, 0, epochs)+0.2);
 %randomCity = randperm(numNodes,numNodes);
 numUpdates = zeros(1,numNodes);
 
@@ -39,7 +39,7 @@ scatter(cities(:,1),cities(:,2),'g*');
 hold on
 
 % Define the parameter for conscience to allow looser to win
-C = 10;
+C = 0;
 for i = 1:epochs
     randCity = randperm(numNodes);
     for j = 1:numNodes
