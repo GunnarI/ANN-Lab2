@@ -10,7 +10,7 @@ train = [train_vect; train_sin];
 test = [test_vect; test_sin];
 
 %Initialise weights
-weights = rand(1,units);
+weights = zeros(1,units);
 
 for epoch = 1:epochs
     %Shuffle the data by random for each epoch
