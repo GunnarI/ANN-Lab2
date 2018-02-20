@@ -47,7 +47,7 @@ for epoch = 1:epochs
     
     %Calculate error
     %train_error(epoch) = mean(abs(train_sin - weights*rbf));
-    train_error(epoch) = mean(abs(weights*rbf - train_sin));
+    train_error(epoch) = mean((weights*rbf - train_sin).^2);
 end
 
 if plotting == true

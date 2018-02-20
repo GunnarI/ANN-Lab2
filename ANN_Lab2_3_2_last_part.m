@@ -54,7 +54,7 @@ fprintf('Time for Delta-Rule: ')
 toc;
 
 %MSR for comparison
-mean_square_error = mean(del_error.^2);
+mean_square_error = min(del_error);
 fprintf('Mean Square Error of Delta Function is: %d \n\n',mean_square_error)
 
 %Plot delta-rule for comparison
@@ -78,7 +78,7 @@ data = [train_sin, test_sin];
 data_noiseless = [train_sin - gauss_noise, test_sin - gauss_noise];
 
 %decide on ratio for training/validation
-trval_ratio = 0.5;
+trval_ratio = 0.2;
 train_len = round(length(train_sin) - trval_ratio*length(train_sin));
 
 tic;
@@ -88,7 +88,7 @@ net.divideFcn = 'divideind';                    %to divide test/val/trial by par
 net.divideParam.trainInd = 1:train_len;
 net.divideParam.valInd = train_len+1:length(train_sin);
 net.divideParam.testInd = length(train_sin)+1:length(data);
-net.performParam.regularization = 0.01;         %to change regularization strength (is it eta or can we change eta???)
+net.performParam.regularization = 0.00001;         %to change regularization strength (is it eta or can we change eta???)
 %net.trainParam.max_fail = 6;
 net.trainParam.showWindow = false;              %to not get the pop-up window
 
