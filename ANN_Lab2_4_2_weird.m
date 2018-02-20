@@ -9,14 +9,14 @@ W = rand(numNodes,numAttr); %min(1,max(0,cities+(randMat)));
 W_final = zeros(numNodes,numAttr);
 
 % Define the step size
-eta = 0.2;
+eta = 0.1;
 % Define losing step size
 eta_l = 0.005;
 
 % Define number of epochs
-epochs = 200;
+epochs = 100;
 % Define neighbourhood size vector
-neighSize = floor(linspace(2, 0, epochs)+0.1);
+neighSize = floor(linspace(2, 0, epochs)+0.2);
 %randomCity = randperm(numNodes,numNodes);
 numUpdates = zeros(1,numNodes);
 
@@ -43,11 +43,11 @@ scatter(cities(:,1),cities(:,2),'g*');
 hold on
 
 % Define the parameter for conscience to allow looser to win
-C = 10;
+C = 0.8;
 bias = zeros(1,numNodes);
-minLeakyDist = 0.2;
 finCities = zeros(1,numNodes);
 finCityIndex = 1;
+lastWinner = 0;
 for i = 1:epochs
     randCity = randperm(numNodes);
     %j = 0;
@@ -68,21 +68,33 @@ for i = 1:epochs
             bias = C*(1/numNodes - numUpdates./sum(numUpdates));
         end
         d = sum(temp.^2,2)-bias';
-        [minValue,minNode] = min(d);
+        [dVec, dInd] = sort(d);
+        minNode = dInd(1);
+        minValue = dVec(1);
+        if minNode == lastWinner
+            minNode = dInd(2);
+            minValue = dVec(2);
+        end
+        %[minValue,minNode] = min(d);
+        minValue = minValue+bias(minNode);
         %fprintf('Winning node: %d\n', minNode)
         
         % Update the weights which correspond to the shortest distance as
         % well as all its neighbouring weights
         if (neighSize(i) == 0)
+            if nnz(finCities) > 5
+                lastWinner = minNode;
+            end
             W(minNode,:) = W(minNode,:) + eta*(p-W(minNode,:));
-            W(1:numNodes~=minNode,:) = W(1:numNodes~=minNode,:) + eta_l*(p-W(1:numNodes~=minNode,:));
+            %W(1:numNodes~=minNode,:) = W(1:numNodes~=minNode,:) + eta_l*(p-W(1:numNodes~=minNode,:));
             numUpdates(minNode) = numUpdates(minNode)+1;
+            numUpdates(W(:,1)==inf) = numUpdates(W(:,1)==inf)+1;
 
             clearpoints(h{minNode});
             addpoints(h{minNode},W(minNode,1),W(minNode,2));
             drawnow;
             pause(0.001);
-            if minValue < 0.005
+            if minValue < 0.001
                 W_final(minNode,:) = W(minNode, :);
                 W(minNode,:) = [inf,inf];
                 %randCity(j) = [];
@@ -115,10 +127,20 @@ hold off
 W = W_final;
 pos = zeros(numNodes,1);
 for i = 1:numNodes
+%     p = cities(i,:);
+%     temp = p-W;
+%     d = sum(temp.^2,2);
+%     [~,pos(i)] = min(d);
+    
     p = cities(i,:);
     temp = p-W;
     d = sum(temp.^2,2);
-    [~,pos(i)] = min(d);
+    [~, dInd] = sort(d);
+    j = 1;
+    while ismember(dInd(j),pos)
+        j = j+1;
+    end
+    pos(i) = dInd(j);
 end
 
 posPrint = sprintf('%d ', pos);
