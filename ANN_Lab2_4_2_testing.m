@@ -7,30 +7,32 @@ cities = importCities('cities.dat');
 %epochs = 100;
 
 % Define the parameter for conscience to allow looser to win
-C = 1;
+%C = 1;
+%[route, routeDist, bestW, ~] = findShortest(cities,0.4,100,0.5);
 
 route = zeros(1:10);
 routeDist = inf;
 numDistQual = inf;
 for epoch = 60:10:180
     for eta = 0.05:0.01:0.5
-        %for C = 0.5:0.5:5
+        for C = 0:0.5:5
             [tempRoute, tempRouteDist, W, tempNumDistQual] = ...
-                findShortest(cities, eta, epochs, C);
+                findShortest(cities, eta, epoch, C);
             if tempRouteDist < routeDist && tempNumDistQual < numDistQual
                 routeDist = tempRouteDist;
                 route = tempRoute;
                 numDistQual = tempNumDistQual;
                 bestEta = eta;
-                %bestC = C;
+                bestC = C;
                 bestEpoch = epoch;
+                bestW = W;
             end
-        %end
+        end
     end
 end
 
 figure
-plot(W(:,1),W(:,2),'rd')
+plot(bestW(:,1),bestW(:,2),'rd')
 hold on
 plot(cities(route,1),cities(route,2),'b--')
 hold on
