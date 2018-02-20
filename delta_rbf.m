@@ -1,4 +1,4 @@
-function train_error = delta_rbf(train_vect, train_sin, test_vect, test_sin, sigma, eta, epochs, units, plotting)
+function [train_error, test_f] = delta_rbf(train_vect, train_sin, test_vect, test_sin, sigma, eta, epochs, units, plotting)
 %%% uses delta function with incremental learning algorithm.
 
 %mui is the middle of the RBF, we place it at the sinusfunction.
@@ -69,7 +69,7 @@ if plotting == true
     legend('original','output')
     
 end
-    
+
 %error of as mean of all N patterns
 %train_error = mean(train_error);
 %train_error = train_error(end);
