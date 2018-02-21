@@ -1,3 +1,4 @@
+clear all, close all, clc
 cities = importCities('cities.dat');
 
 % Define the step size
@@ -40,3 +41,6 @@ scatter(cities(:,1),cities(:,2),'g*');
 legendNames = cellstr(num2str((1:length(route))'));
 dx = 0.01; dy = 0.01;
 text(cities(:,1)+dx, cities(:,2)+dy, legendNames);
+legend('Weights','Route','Cities')
+best_text = sprintf('eta = %.2f, Epoch = %d, C = %.2f',bestEta, bestEpoch, bestC);
+title({'Shortest Route between Cities',best_text})
