@@ -1,4 +1,4 @@
-function [mui, sigma, final_rbf] = findSol3_3(train, mui, sigma, eta, epochs)
+function [mui, sigma, final_rbf] = findSol3_3(train, mui, sigma, eta, eta_l, epochs)
 
 for k = 1:epochs
     %randomize the x data:
@@ -14,7 +14,7 @@ for k = 1:epochs
                 mui(:,max_ind) = mui(:,max_ind) - eta*(mui(:,max_ind)-x_rand(:,i));
                 sigma(max_ind) = max(0.1,sigma(max_ind)-0.01);
             else
-                %mui(:,j) = mui(:,j) - eta_l*(mui(:,j)-x_rand(:,i));
+                mui(:,j) = mui(:,j) - eta_l*(mui(:,j)-x_rand(:,i));
             end
 
         end
