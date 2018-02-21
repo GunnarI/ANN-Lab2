@@ -68,9 +68,9 @@ end
 % Plot the results
 %xpos = 1:numAnimals;
 scatter(posVoter(:,1),posVoter(:,2));
-legendNames = cellstr(mpparty_str);
+legendParties = cellstr(mpparty_str);
 dx = 0.1; dy = 0.1;
-text(posVoter(:,1)+dx, posVoter(:,2)+dy, legendNames);
+text(posVoter(:,1)+dx, posVoter(:,2)+dy, legendParties);
 set(gca,'xtick',[])
 title('Animal similarity positioning')
 ylabel('Animal Position')
