@@ -26,7 +26,7 @@ units = 15;
 
 %Giva a value to the sigma parameter.
 sigma = 0.8;
-eta = 0.1;
+eta = 0.01;
 
 %create the random rbf's for the beginning of the code
 mui = get_random_mui(train_vect, units);
@@ -35,6 +35,7 @@ mui = get_random_mui(train_vect, units);
 x = [train_vect; train_sin];
 
 %rbf in beginning
+figure
 plot(train_vect, train_sin), hold on, plot(mui(1,:),mui(2,:),'*')
 
 %randomize the x data:
@@ -48,15 +49,16 @@ rbf = GaussianRBF(x_rand, mui, sigma);
 
 [val, max_ind] = max(rbf(i,:));
 
-if mui(max_ind) > x_rand(i)
-    mui(max_ind) = mui(ma
-
-
-
-
+for j = 1:length(mui)
+    if j == max_ind
+        mui(max_ind) = mui(max_ind) - eta*(mui(max_ind)-x_rand(i));
+    else
+        mui(j) = mui(j) + eta*(mui(j)-x(rand(i));
 
 end
 
+figure
+plot(train_vect, train_sin), hold on, plot(mui(1,:),mui(2,:),'*')
 
 
 
